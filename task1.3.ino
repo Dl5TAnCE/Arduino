@@ -20,6 +20,8 @@ void loop() {
     String data = Serial.readStringUntil('\n'); 
     
     int angles[4];
+    parseData(data, angles);
+    
     base.write(angles[0]);
     rArm.write(angles[1]);
     fArm.write(angles[2]);
@@ -29,5 +31,15 @@ void loop() {
     Serial.print(", R="); Serial.print(angles[1]);
     Serial.print(", F="); Serial.print(angles[2]);
     Serial.print(", C="); Serial.println(angles[3]);
+  }
+}
+
+void parseData(String data, int* angles) {
+  int index = 0;
+  char* token = strtok((char*)data.c_str(), ","); 
+  
+  while (token != NULL && index < 4) {
+    angles[index++] = atoi(token); 
+    token = strtok(NULL, ",");    
   }
 }
