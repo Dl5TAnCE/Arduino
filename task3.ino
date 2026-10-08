@@ -7,7 +7,7 @@ const int pinJoyX = A0, pinJoyY = A1, pinJoyZ = A2, pinJoyG = A3;
 const int PICK_A[4] = {60, 60, 130, 180};  
 const int PLACE_A[4] = {60, 90, 90, 0};    
 const int PICK_B[4] = {90, 55, 125, 180};  
-const int PLACE_B[4] = {90, 90, 90, 0};   
+const int PLACE_B[4] = {90, 90, 90, 0};    
 const int PICK_C[4] = {120, 60, 130, 180}; 
 const int PLACE_C[4] = {120, 90, 90, 0};   
 const int HOME[4] = {90, 90, 90, 90};      
@@ -23,7 +23,19 @@ void setup() {
 }
 
 void loop(){
+  if (isReplaying) {
+    replayActions();
+    return; 
+  }
 
+  if (isRecording) {
+    controlWithJoystick();
+    recordActions();
+    return;
+  }
 
-
+  if (digitalRead(pinBtn1) == LOW) {
+    delay(50); 
+    if (digitalRead(pinBtn1) == LOW) executePickPlaceCycle();
+    while(digitalRead(pinBtn1) == LOW); 
 }
