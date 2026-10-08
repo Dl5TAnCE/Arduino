@@ -39,3 +39,46 @@ void loop(){
     if (digitalRead(pinBtn1) == LOW) executePickPlaceCycle();
     while(digitalRead(pinBtn1) == LOW); 
 }
+
+void recordActions() {
+  if (millis() - recordStartTime >= RECORD_DURATION) {
+    Serial.println(">>> Auto-stopped: Reached 10s limit.");
+    isRecording = false; 
+    return;
+  }
+  static unsigned long lastRecordTime = 0;
+  if (millis() - lastRecordTime >= RECORD_INTERVAL && recordedCount < MAX_RECORDS) {
+    recordedActions[recordedCount].posBase = curB;
+    recordedActions[recordedCount].posRArm = curR;
+    recordedActions[recordedCount].posFArm = curF;
+    recordedActions[recordedCount].posClaw = curC;
+    recordedCount++;
+    lastRecordTime = millis();
+  }
+}
+
+void replayActions() {
+  for (int i = 0; i < recordedCount; i++) {
+    moveTo(recordedActions[i].posBase, recordedActions[i].posRArm, 
+           recordedActions[i].posFArm, recordedActions[i].posClaw);
+    delay(RECORD_INTERVAL); // 按照录制时的间隔还原时间轴
+  }
+  Serial.println(">>> REPLAY COMPLETE.");
+  isReplaying = false;
+}
+
+void controlWithJoystick() {
+  int x = analogRead(pinJoyX), y = analogRead(pinJoyY);
+  int z = analogRead(pinJoyZ), g = analogRead(pinJoyG);
+  
+  if (x < 400) curB = constrain(curB + 1, 0, 180);
+  if (x > 600) curB = constrain(curB - 1, 0, 180);
+  if (y < 400) curR = constrain(curR + 1, 0, 180);
+  if (y > 600) curR = constrain(curR - 1, 0, 180);
+  if (z < 400) curF = constrain(curF + 1, 0, 180);
+  if (z > 600) curF = constrain(curF - 1, 0, 180);
+  if (g < 400) curC = constrain(curC + 1, 0, 180);
+  if (g > 600) curC = constrain(curC - 1, 0, 180);
+
+  base.write(curB); rArm.write(curR); fArm.write(curF); claw.write(curC);
+}
