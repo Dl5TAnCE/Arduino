@@ -38,6 +38,25 @@ void loop(){
     delay(50); 
     if (digitalRead(pinBtn1) == LOW) executePickPlaceCycle();
     while(digitalRead(pinBtn1) == LOW); 
+ if (digitalRead(pinBtn2) == LOW) {
+    delay(50);
+    if (digitalRead(pinBtn2) == LOW) toggleRecording();
+    while(digitalRead(pinBtn2) == LOW);
+  }
+  if (digitalRead(pinBtn3) == LOW) {
+    delay(50);
+    if (digitalRead(pinBtn3) == LOW) startReplay();
+    while(digitalRead(pinBtn3) == LOW);
+  }
+  if (digitalRead(pinBtn4) == LOW) {
+    delay(50);
+    if (digitalRead(pinBtn4) == LOW) {
+      Serial.println("Returning to Home...");
+      moveTo(HOME[0], HOME[1], HOME[2], HOME[3]);
+    }
+    while(digitalRead(pinBtn4) == LOW);
+  }
+}
 }
 
 void recordActions() {
