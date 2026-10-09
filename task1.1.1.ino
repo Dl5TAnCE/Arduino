@@ -4,9 +4,9 @@ Servo base, fArm, rArm, claw;
 
 void setup() {
   Serial.begin(9600);
-  base.attach(11);
-  rArm.attach(10);
-  fArm.attach(9);
+  base.attach(9);
+  rArm.attach(8);
+  fArm.attach(7);
   claw.attach(6);
   
   base.write(90);
@@ -18,7 +18,7 @@ void setup() {
 }
 
 void loop() {
-  char servoName = 0;  // 
+  char servoName = 0;  
   
   if (Serial.available() > 0) {
     servoName = Serial.read();
@@ -32,22 +32,18 @@ void loop() {
     
     // 
     switch(servoName) {
-      case 'b':
+      case 'b':{
         base.write(constrain(angle, 0, 180));
-        break;
-      case 'r':
+        break;}
+      case 'r':{
         rArm.write(constrain(angle, 0, 180));
-        break;
-      case 'f':
+        break;}
+      case 'f':{
         fArm.write(constrain(angle, 0, 180));
-        break;
-      case 'c':
+        break;}
+      case 'c':{
         claw.write(constrain(angle, 0, 180));
-        break;
-      default:
-        Serial.print("Unknown command: ");
-        Serial.println(servoName);
-        break;
+        break;}
     }
   }
   
