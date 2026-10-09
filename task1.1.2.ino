@@ -39,81 +39,77 @@ void servo(){
     int basePos, rArmPos, fArmPos, clawPos;
     
     switch(servoName){
-        case 'a': // Base左
+        case 'a': {// Base左
             Serial.println("Base左");                
             basePos = base.read() - Step;
             basePos = constrain(basePos, baseMin, baseMax);
             base.write(basePos);
             Serial.println(basePos); 
             delay(Delay);
-            break;  
+            break;  }
             
-        case 'd': // Base右
+        case 'd': {// Base右
             Serial.println("Base右");                
             basePos = base.read() + Step;
             basePos = constrain(basePos, baseMin, baseMax);
             base.write(basePos);
             Serial.println(basePos); 
             delay(Delay);
-            break;        
+            break;}        
             
-        case 's': // rArm下
+        case 's': {// rArm下
             Serial.println("rArm下");                
             rArmPos = rArm.read() + Step;
             rArmPos = constrain(rArmPos, rArmMin, rArmMax);
             rArm.write(rArmPos);
             Serial.println(rArmPos); 
             delay(Delay);
-            break;  
+            break; } 
             
-        case 'w': // rArm上
+        case 'w': {// rArm上
             Serial.println("rArm上");     
             rArmPos = rArm.read() - Step;
             rArmPos = constrain(rArmPos, rArmMin, rArmMax);
             rArm.write(rArmPos);
             delay(Delay);
             Serial.println(rArmPos); 
-            break;  
+            break;  }
             
-        case 'i': // fArm上
+        case 'i': {// fArm上
             Serial.println("fArm上");        
             fArmPos = fArm.read() + Step;
             fArmPos = constrain(fArmPos, fArmMin, fArmMax);
             fArm.write(fArmPos);
             delay(Delay);
             Serial.println(fArmPos); 
-            break;  
+            break;  }
             
-        case 'k': // fArm下
+        case 'k': {// fArm下
             Serial.println("fArm下");        
             fArmPos = fArm.read() - Step;
             fArmPos = constrain(fArmPos, fArmMin, fArmMax);
             fArm.write(fArmPos);
             Serial.println(fArmPos); 
             delay(Delay);
-            break;  
+            break;  }
             
-        case 'j': // Claw关闭
+        case 'j': {// Claw关闭
             Serial.println("Claw关闭");        
             clawPos = claw.read() + Step;
             clawPos = constrain(clawPos, clawMin, clawMax);
             claw.write(clawPos);
             Serial.println(clawPos);
             delay(Delay);
-            break;  
+            break; } 
             
-        case 'l': // Claw打开
+        case 'l': {// Claw打开
             Serial.println("Claw打开");     
             clawPos = claw.read() - Step;
             clawPos = constrain(clawPos, clawMin, clawMax);
             claw.write(clawPos);
             Serial.println(clawPos);
             delay(Delay);
-            break;  
+            break;  }
             
-        default:
-            Serial.print("Unknown command: ");
-            Serial.println(servoName);
-            break;
     }
 }
