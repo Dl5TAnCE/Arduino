@@ -57,6 +57,40 @@ void loop(){
     while(digitalRead(pinBtn4) == LOW);
   }
 }
+
+void executePickPlaceCycle() {
+  const int* pickPos;
+  const int* placePos;
+  
+  if (currentPickTarget == 0) { 
+           pickPos = PICK_A;
+           placePos = PLACE_A; 
+           Serial.println("Picking A"); }
+      else if (currentPickTarget == 1){ 
+          pickPos = PICK_B; 
+          placePos = PLACE_B; 
+          Serial.println("Picking B"); }
+      else 
+          { pickPos = PICK_C; 
+           placePos = PLACE_C; 
+           Serial.println("Picking C"); 
+           }
+
+  moveTo(pickPos[0], pickPos[1], pickPos[2], pickPos[3]); 
+  delay(300);
+  moveTo(pickPos[0], pickPos[1], pickPos[2], 0);        
+ delay(500);
+  moveTo(pickPos[0], 90, 90, 0);                          
+delay(300);
+  moveTo(placePos[0], 90, 90, 0);                        
+ delay(300);
+  moveTo(placePos[0], placePos[1], placePos[2], 0);      
+  delay(300);
+  moveTo(placePos[0], placePos[1], placePos[2], 180);    
+  delay(500);
+  moveTo(HOME[0], HOME[1], HOME[2], HOME[3]);             
+
+  currentPickTarget = (currentPickTarget + 1) % 3; 
 }
 
 void recordActions() {
@@ -100,4 +134,46 @@ void controlWithJoystick() {
   if (g > 600) curC = constrain(curC - 1, 0, 180);
 
   base.write(curB); rArm.write(curR); fArm.write(curF); claw.write(curC);
+}
+
+void moveTo(int b, int r, int f, int c) {
+  int steps = max(max(abs(b - curB), abs(r - curR)), max(abs(f - curF), abs(c - curC)));
+  if (steps == 0) return;
+  float dB = (float)(b - curB) / steps, dR = (float)(r - curR) / steps;
+  float dF = (float)(f - curF) / steps, dC = (float)(c - curC) / steps;
+  for (int i = 1; i <= steps; i++) {
+    curB = constrain((int)(b - dB * (steps - i)), 0, 180);
+    curR = constrain((int)(r - dR * (steps - i)), 0, 180);
+    curF = constrain((int)(f - dF * (steps - i)), 0, 180);
+    curC = constrain((int)(c - dC * (steps - i)), 0, 180);
+    base.write(curB); rArm.write(curR); fArm.write(curF); claw.write(curC);
+    delay(15);
+  }
+}
+
+void startReplay() {
+  if (recordedCount == 0) {
+    Serial.println("No recorded actions to play!");
+    return;
+  }
+  isReplaying = true;
+  Serial.println(">>> REPLAYING ACTIONS...");
+}
+
+void toggleRecording() {
+  if (!isRecording) {
+    isRecording = true;
+    recordedCount = 0;
+    recordStartTime = millis();
+    Serial.println(">>> RECORDING STARTED (Use Joystick)");
+  } else {
+    isRecording = false;
+    unsigned long duration = millis() - recordStartTime;
+    if (duration >= RECORD_DURATION) {
+      Serial.print(">>> RECORDING SAVED ("); Serial.print(duration/1000); Serial.println("s)");
+    } else {
+      Serial.println(">>> RECORD FAILED: Less than 10s!");
+      recordedCount = 0; // 录制时间不足，清空数据
+    }
+  }
 }
